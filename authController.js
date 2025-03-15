@@ -12,9 +12,12 @@ const pooll = require('./db');
 // Upload Product Function
 const uploaddata = async (req, res) => {
     try {
+        console.log("🚀 Request received:", req.body); // Debugging Line
+
         const { email, datetime } = req.body;
 
         if (!email || !datetime) {
+            console.log("❌ Missing email or datetime"); // Debugging Line
             return res.status(400).json({ message: "All fields are required." });
         }
 
@@ -27,21 +30,24 @@ const uploaddata = async (req, res) => {
         `;
 
         const { rowCount, rows } = await pooll.query(updateQuery, [
-            datetime, // Corrected order: datetime first
+            datetime,
             email
         ]);
 
         if (rowCount === 0) {
+            console.log("⚠️ No matching record found"); // Debugging Line
             return res.status(404).json({ message: "Product not found." });
         }
 
+        console.log("✅ Product updated successfully:", rows[0]); // Debugging Line
         res.status(200).json({ message: "Product updated successfully.", product: rows[0] });
 
     } catch (error) {
-        console.error("Error updating product:", error);
+        console.error("🚨 Error updating product:", error);
         res.status(500).json({ message: "An error occurred while updating the product." });
     }
 };
+
 
 
 
