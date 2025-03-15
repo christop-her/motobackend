@@ -24,7 +24,7 @@ const uploaddata = async (req, res) => {
 
         // Check if email exists
         const checkQuery = `SELECT * FROM settime WHERE email = $1;`;
-        const checkResult = await pool.query(checkQuery, [email]);
+        const checkResult = await pooll.query(checkQuery, [email]);
 
         if (checkResult.rowCount > 0) {
             // Update existing record
