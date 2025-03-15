@@ -29,7 +29,7 @@ const uploaddata = async (req, res) => {
         if (checkResult.rowCount > 0) {
             // Update existing record
             const updateQuery = `UPDATE settime SET datetime = $1 WHERE email = $2 RETURNING *;`;
-            const updateResult = await pooll.query(updateQuery, [formattedDateTime, email]);
+            const updateResult = await pooll.query(updateQuery, [datetime, email]);
 
             if (updateResult.rowCount > 0) {
                 console.log("✅ Datetime updated successfully:", updateResult.rows[0]);
@@ -41,7 +41,7 @@ const uploaddata = async (req, res) => {
         } else {
             // Insert new record
             const insertQuery = `INSERT INTO settime (email, datetime) VALUES ($1, $2) RETURNING *;`;
-            const insertResult = await pooll.query(insertQuery, [email, formattedDateTime]);
+            const insertResult = await pooll.query(insertQuery, [email, datetime]);
 
             if (insertResult.rowCount > 0) {
                 console.log("✅ New datetime inserted successfully:", insertResult.rows[0]);
