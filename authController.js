@@ -21,27 +21,36 @@ const uploaddata = async (req, res) => {
             return res.status(400).json({ message: "All fields are required." });
         }
 
+
         // Check if email exists
         const checkQuery = `SELECT * FROM settime WHERE email = $1;`;
-        const checkResult = await pooll.query(checkQuery, [email]);
+        const checkResult = await pool.query(checkQuery, [email]);
 
         if (checkResult.rowCount > 0) {
             // Update existing record
             const updateQuery = `UPDATE settime SET datetime = $1 WHERE email = $2 RETURNING *;`;
-            const { rows } = await pooll.query(updateQuery, [datetime, email]);
+            const updateResult = await pooll.query(updateQuery, [formattedDateTime, email]);
 
-            console.log("✅ Datetime updated successfully:", rows[0]);
-            return res.status(200).json({ message: "Datetime updated successfully.", data: rows[0] });
-
+            if (updateResult.rowCount > 0) {
+                console.log("✅ Datetime updated successfully:", updateResult.rows[0]);
+                return res.status(200).json({ message: "Datetime updated successfully.", data: updateResult.rows[0] });
+            } else {
+                console.log("⚠️ Update failed.");
+                return res.status(500).json({ message: "Update failed." });
+            }
         } else {
             // Insert new record
             const insertQuery = `INSERT INTO settime (email, datetime) VALUES ($1, $2) RETURNING *;`;
-            const { rows } = await pool.query(insertQuery, [email, datetime]);
+            const insertResult = await pooll.query(insertQuery, [email, formattedDateTime]);
 
-            console.log("✅ New datetime inserted successfully:", rows[0]);
-            return res.status(201).json({ message: "Datetime inserted successfully.", data: rows[0] });
+            if (insertResult.rowCount > 0) {
+                console.log("✅ New datetime inserted successfully:", insertResult.rows[0]);
+                return res.status(201).json({ message: "Datetime inserted successfully.", data: insertResult.rows[0] });
+            } else {
+                console.log("⚠️ Insert failed.");
+                return res.status(500).json({ message: "Insert failed." });
+            }
         }
-
     } catch (error) {
         console.error("🚨 Error updating datetime:", error);
         return res.status(500).json({ message: "An error occurred while updating the datetime." });
