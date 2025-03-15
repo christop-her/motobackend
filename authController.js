@@ -50,7 +50,7 @@ const getUploaded = async (req, res) => {
         const { email } = req.body;
 
         // Fetch products based on email
-        const { rows } = await pool.query("SELECT * FROM settime WHERE email = $1", [email]);
+        const { rows } = await pooll.query("SELECT * FROM settime WHERE email = $1", [email]);
 
         if (rows.length > 0) {
             return res.json({
