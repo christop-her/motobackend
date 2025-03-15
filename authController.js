@@ -74,7 +74,7 @@ const getUploaded = async (req, res) => {
                 data: rows
             });
         } else {
-            return res.status(404).json({ message: "No products found." });
+            return res.status(404).json({ message: "No products found.", email});
         }
     } catch (error) {
         console.error("Error fetching products:", error);
