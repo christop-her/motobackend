@@ -29,15 +29,15 @@ const uploaddata = async (req, res) => {
             RETURNING *;
         `;
 
-        const { rowCount, rows } = await pooll.query(updateQuery, [
+        const { rows } = await pooll.query(updateQuery, [
             datetime,
             email
         ]);
 
-        if (rowCount === 0) {
-            console.log("⚠️ No matching record found"); // Debugging Line
-            return res.status(404).json({ message: "Product not found." });
-        }
+        // if (rowCount === 0) {
+        //     console.log("⚠️ No matching record found"); // Debugging Line
+        //     return res.status(404).json({ message: "Product not found." });
+        // }
 
         console.log("✅ Product updated successfully:", rows[0]); // Debugging Line
         res.status(200).json({ message: "Product updated successfully.", product: rows[0] });
