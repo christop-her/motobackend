@@ -12,41 +12,42 @@ const pooll = require('./db');
 // Upload Product Function
 const uploaddata = async (req, res) => {
     try {
-        console.log("🚀 Request received:", req.body); // Debugging Line
+        console.log("🚀 Request received:", req.body);
 
         const { email, datetime } = req.body;
 
         if (!email || !datetime) {
-            console.log("❌ Missing email or datetime"); // Debugging Line
+            console.log("Missing email or datetime");
             return res.status(400).json({ message: "All fields are required." });
         }
 
-        // Update product details
-        const updateQuery = `
-            UPDATE settime 
-            SET datetime = $1
-            WHERE email = $2
-            RETURNING *;
-        `;
+        // Check if email exists
+        const checkQuery = `SELECT * FROM settime WHERE email = $1;`;
+        const checkResult = await pooll.query(checkQuery, [email]);
 
-        const { rows } = await pooll.query(updateQuery, [
-            datetime,
-            email
-        ]);
+        if (checkResult.rowCount > 0) {
+            // Update existing record
+            const updateQuery = `UPDATE settime SET datetime = $1 WHERE email = $2 RETURNING *;`;
+            const { rows } = await pooll.query(updateQuery, [datetime, email]);
 
-        // if (rowCount === 0) {
-        //     console.log("⚠️ No matching record found"); // Debugging Line
-        //     return res.status(404).json({ message: "Product not found." });
-        // }
+            console.log("✅ Datetime updated successfully:", rows[0]);
+            return res.status(200).json({ message: "Datetime updated successfully.", data: rows[0] });
 
-        console.log("✅ Product updated successfully:", rows[0]); // Debugging Line
-        res.status(200).json({ message: "Product updated successfully.", product: rows[0] });
+        } else {
+            // Insert new record
+            const insertQuery = `INSERT INTO settime (email, datetime) VALUES ($1, $2) RETURNING *;`;
+            const { rows } = await pool.query(insertQuery, [email, datetime]);
+
+            console.log("✅ New datetime inserted successfully:", rows[0]);
+            return res.status(201).json({ message: "Datetime inserted successfully.", data: rows[0] });
+        }
 
     } catch (error) {
-        console.error("🚨 Error updating product:", error);
-        res.status(500).json({ message: "An error occurred while updating the product." });
+        console.error("🚨 Error updating datetime:", error);
+        return res.status(500).json({ message: "An error occurred while updating the datetime." });
     }
 };
+
 
 
 
