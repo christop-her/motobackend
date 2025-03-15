@@ -1,11 +1,11 @@
 // const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+// const crypto = require("crypto");
+// const nodemailer = require("nodemailer");
 const pooll = require('./db');
 // require('.env').config();
-const multer = require("multer");
-const path = require("path");
+// const multer = require("multer");
+// const path = require("path");
 
 
 
